@@ -1,22 +1,22 @@
 import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
-interface MyPluginSettings {
+interface BibliographyPluginSettings {
 	mySetting: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: BibliographyPluginSettings = {
 	mySetting: 'default'
 }
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class BibliographyPlugin extends Plugin {
+	settings: BibliographyPluginSettings;
 
 	async onload() {
 		console.log('loading plugin');
 
 		await this.loadSettings();
 
-		this.addRibbonIcon('dice', 'Sample Plugin', () => {
+		this.addRibbonIcon('book', 'Bibliography Plugin', () => {
 			new Notice('This is a notice!');
 		});
 
@@ -40,7 +40,7 @@ export default class MyPlugin extends Plugin {
 			}
 		});
 
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new BibliographySettingTab(this.app, this));
 
 		this.registerCodeMirror((cm: CodeMirror.Editor) => {
 			console.log('codemirror', cm);
@@ -82,10 +82,10 @@ class SampleModal extends Modal {
 	}
 }
 
-class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+class BibliographySettingTab extends PluginSettingTab {
+	plugin: BibliographyPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: BibliographyPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}

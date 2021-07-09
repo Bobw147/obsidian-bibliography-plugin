@@ -1,6 +1,6 @@
 {
 	"id": "obsidian-bibliography-plugin",
-	"name": "Bibliogrpahy Plugin",
+	"name": "Bibliography Plugin",
 	"version": "1.0.0",
 	"minAppVersion": "0.9.12",
 	"description": "This is a bibliography and citation plugin for Obsidian.",
