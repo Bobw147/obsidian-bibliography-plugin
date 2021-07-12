@@ -7,8 +7,7 @@ export default class BibliographyPlugin extends Plugin {
 	settings: BibliographyPluginSettings;
 
 	async onload() {
-		console.log('loading plugin');
-
+		// Load settings. Establish defaults on first access
 		this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData() ?? {});
 
 		this.addSettingTab(new BibliographyPluginSettingsTab(this.app, this));
@@ -126,5 +125,22 @@ class BibliographyPluginSettingsTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					await this.plugin.updateSettings({ mySetting: value });
 				}));
+
+
+    	new Setting(containerEl)
+      		.setName('Show icon in sidebar')
+      		.setDesc(
+        		'When on, a button which opens the Bibliography viewer/editor will be added to the ribbon bar. ' +
+          		'The viewer/editor can also be opened with a Hotkey. Changes only take effect on reload.',
+      		)
+      		.addToggle((toggle) =>
+        		toggle.setValue(this.plugin.settings.showRibbonIcon)
+          	.onChange((value) => {
+            	this.plugin.settings.showRibbonIcon = value;
+            	this.plugin.saveData(this.plugin.settings);
+            	this.display();
+          }),
+      );
+
 	}
 }
