@@ -1,13 +1,7 @@
 import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { addIcons } from './icons';
+import { BibliographySettings, DEFAULT_SETTINGS} from "./settings";
 
-interface BibliographyPluginSettings {
-	mySetting: string;
-}
-
-const DEFAULT_SETTINGS: BibliographyPluginSettings = {
-	mySetting: 'default'
-}
 
 export default class BibliographyPlugin extends Plugin {
 	settings: BibliographyPluginSettings;
@@ -15,9 +9,11 @@ export default class BibliographyPlugin extends Plugin {
 	async onload() {
 		console.log('loading plugin');
 
-		await this.loadSettings();
+		this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData() ?? {});
 
-		this.addStatusBarItem().setText('Status Bar Text');
+		this.addSettingTab(new BibliographyPluginSettingsTab(this.app, this));
+
+		// this.addStatusBarItem().setText('Status Bar Text');
 
 		this.addCommand({
 			id: 'create-citation',
@@ -39,19 +35,12 @@ export default class BibliographyPlugin extends Plugin {
 
 		addIcons();
 
-		this.addRibbonIcon('bookmark', 'View Library',() => {
-			this.toggleBibliographyView();
-		});
-
+		if (this.settings.showRibbonIcon) {
+			this.addRibbonIcon('bookmark', 'View Library',() => {
+				this.toggleBibliographyView();
+			});
+		}
 	
-//		if (this.settings.showRibbonIcon) {
-//		  this.addRibbonIcon('spreadsheet', 'Advanced Tables Toolbar', () => {
-//			this.toggleTableControlsView();
-//		  });
-//		}
-	
-		this.addSettingTab(new BibliographySettingTab(this.app, this));
-
 		this.registerCodeMirror((cm: CodeMirror.Editor) => {
 			console.log('codemirror', cm);
 		});
@@ -67,11 +56,9 @@ export default class BibliographyPlugin extends Plugin {
 		console.log('unloading plugin');
 	}
 
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-	}
-
-	async saveSettings() {
+	/** Update plugin settings. */
+	async updateSettings(settings: Partial<BibliographySettings>) {
+		Object.assign(this.settings, settings);
 		await this.saveData(this.settings);
 	}
 
@@ -106,7 +93,16 @@ class CitationModal extends Modal {
 	}
 }
 
-class BibliographySettingTab extends PluginSettingTab {
+class BibliographyPluginSettings {
+	mySetting: string;
+	public showRibbonIcon: boolean;
+
+	constructor(){
+		this.showRibbonIcon = true;
+	}
+}
+
+class BibliographyPluginSettingsTab extends PluginSettingTab {
 	plugin: BibliographyPlugin;
 
 	constructor(app: App, plugin: BibliographyPlugin) {
@@ -126,11 +122,9 @@ class BibliographySettingTab extends PluginSettingTab {
 			.setDesc('It\'s a secret')
 			.addText(text => text
 				.setPlaceholder('Enter your secret')
-				.setValue('')
+				.setValue(this.plugin.settings.mySetting)
 				.onChange(async (value) => {
-					console.log('Secret: ' + value);
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
+					await this.plugin.updateSettings({ mySetting: value });
 				}));
 	}
 }
