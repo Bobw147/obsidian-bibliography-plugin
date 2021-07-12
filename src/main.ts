@@ -1,4 +1,5 @@
 import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { addIcons } from './icons';
 
 interface BibliographyPluginSettings {
 	mySetting: string;
@@ -16,15 +17,11 @@ export default class BibliographyPlugin extends Plugin {
 
 		await this.loadSettings();
 
-		this.addRibbonIcon('book', 'Bibliography Plugin', () => {
-			new Notice('This is a notice!');
-		});
-
 		this.addStatusBarItem().setText('Status Bar Text');
 
 		this.addCommand({
-			id: 'open-sample-modal',
-			name: 'Open Sample Modal',
+			id: 'create-citation',
+			name: 'Create Citation',
 			// callback: () => {
 			// 	console.log('Simple Callback');
 			// },
@@ -32,7 +29,7 @@ export default class BibliographyPlugin extends Plugin {
 				let leaf = this.app.workspace.activeLeaf;
 				if (leaf) {
 					if (!checking) {
-						new SampleModal(this.app).open();
+						new CitationModal(this.app).open();
 					}
 					return true;
 				}
@@ -40,6 +37,19 @@ export default class BibliographyPlugin extends Plugin {
 			}
 		});
 
+		addIcons();
+
+		this.addRibbonIcon('bookmark', 'View Library',() => {
+			this.toggleBibliographyView();
+		});
+
+	
+//		if (this.settings.showRibbonIcon) {
+//		  this.addRibbonIcon('spreadsheet', 'Advanced Tables Toolbar', () => {
+//			this.toggleTableControlsView();
+//		  });
+//		}
+	
 		this.addSettingTab(new BibliographySettingTab(this.app, this));
 
 		this.registerCodeMirror((cm: CodeMirror.Editor) => {
@@ -64,16 +74,30 @@ export default class BibliographyPlugin extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+
+	toggleBibliographyView = async (): Promise<void> => {
+		checkCallback: (checking: boolean) => {
+			let leaf = this.app.workspace.activeLeaf;
+			
+			if (!checking) {
+				new CitationModal(this.app).open();
+			}
+			return true;
+
+		}
+	}
 }
 
-class SampleModal extends Modal {
+
+class CitationModal extends Modal {
 	constructor(app: App) {
 		super(app);
 	}
 
 	onOpen() {
 		let {contentEl} = this;
-		contentEl.setText('Woah!');
+		console.log("Opening modal")
+		contentEl.setText('Insert Citation');
 	}
 
 	onClose() {
@@ -95,7 +119,7 @@ class BibliographySettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', {text: 'Settings for my awesome plugin.'});
+		containerEl.createEl('h2', {text: 'Bibliography Settings.'});
 
 		new Setting(containerEl)
 			.setName('Setting #1')
