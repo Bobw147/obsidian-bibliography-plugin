@@ -32,11 +32,23 @@ export default class BibliographyPlugin extends Plugin {
 			}
 		});
 
+		this.addCommand({
+			id: 'bibliography-editor',
+			name: 'View/Edit Bibliography',
+
+			checkCallback: (checking: boolean) => {
+				if (! checking) {
+					new BibliographyModal(this.app).open();
+				}
+				return true;
+			}
+		});
+
 		addIcons();
 
 		if (this.settings.showRibbonIcon) {
 			this.addRibbonIcon('bookmark', 'View Library',() => {
-				this.toggleBibliographyView();
+				this.showBibliographyModal();
 			});
 		}
 	
@@ -61,16 +73,8 @@ export default class BibliographyPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	toggleBibliographyView = async (): Promise<void> => {
-		checkCallback: (checking: boolean) => {
-			let leaf = this.app.workspace.activeLeaf;
-			
-			if (!checking) {
-				new CitationModal(this.app).open();
-			}
-			return true;
-
-		}
+	showBibliographyModal(){
+		new BibliographyModal(this.app).open();
 	}
 }
 
@@ -84,6 +88,23 @@ class CitationModal extends Modal {
 		let {contentEl} = this;
 		console.log("Opening modal")
 		contentEl.setText('Insert Citation');
+	}
+
+	onClose() {
+		let {contentEl} = this;
+		contentEl.empty();
+	}
+};
+
+class BibliographyModal extends Modal {
+	constructor(app: App) {
+		super(app);
+	}
+
+	onOpen() {
+		let {contentEl} = this;
+		console.log("Opening Bibliography modal")
+		contentEl.setText('View/Edit Bibliography');
 	}
 
 	onClose() {
