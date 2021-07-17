@@ -1,4 +1,4 @@
-import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { addIcons } from './icons';
 import { BibliographySettings, DEFAULT_SETTINGS} from "./settings";
 
@@ -88,13 +88,28 @@ class CitationModal extends Modal {
 		let {contentEl} = this;
 		console.log("Opening modal")
 		contentEl.setText('Insert Citation');
+		this.insertCitation("(Wilson, 2021)");
 	}
 
 	onClose() {
 		let {contentEl} = this;
 		contentEl.empty();
 	}
+
+	private getEditor(): Editor {
+		return this.app.workspace.getActiveViewOfType(MarkdownView)?.editor;
+	}
+
+	private insertCitation(citationText: string):void {
+		this.getEditor().replaceSelection(citationText);
+	};
 };
+/*
+	private getCursorPosition(): number {
+		return this.getEditor().setSelection("(Murphy, 1924")
+	}
+};
+*/
 
 class BibliographyModal extends Modal {
 	constructor(app: App) {
@@ -165,3 +180,10 @@ class BibliographyPluginSettingsTab extends PluginSettingTab {
 
 	}
 }
+/*
+function insertTextAtCursor(editor, text) {
+    var doc = editor.getDoc();
+    var cursor = doc.getCursor();
+    doc.replaceRange(text, cursor);
+}
+*/
