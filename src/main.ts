@@ -1,7 +1,7 @@
 import { App, ButtonComponent, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { addIcons } from './icons';
 import { BibliographyPluginSettings, BibliographySettings, DEFAULT_SETTINGS} from "./settings";
-
+import { CitationPart, SourceType, getTemplate} from './templates'
 
 export default class BibliographyPlugin extends Plugin {
 	// Make settings publicly available
@@ -17,7 +17,14 @@ export default class BibliographyPlugin extends Plugin {
 		console.log("loading");
 		// Load settings. Establish defaults on first access
 		await this.loadSettings();
-		console.log("Bypassed load settings");
+		console.log("Getting archive citation template");
+
+		// Temp Start
+		var citationTemplate:CitationPart[] = getTemplate(SourceType.Archive);
+		for (var i in citationTemplate){
+			console.log(citationTemplate[i])
+		}
+		// Temp Ends
 
 		this.addSettingTab(new BibliographyPluginSettingsTab(this.app, this));
 
