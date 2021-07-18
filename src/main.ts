@@ -17,10 +17,7 @@ export default class BibliographyPlugin extends Plugin {
 		this.addCommand({
 			id: 'create-citation',
 			name: 'Create Citation',
-			// callback: () => {
-			// 	console.log('Simple Callback');
-			// },
-			checkCallback: (checking: boolean) => {
+				checkCallback: (checking: boolean) => {
 				let leaf = this.app.workspace.activeLeaf;
 				if (leaf) {
 					if (!checking) {
@@ -90,6 +87,7 @@ class CitationModal extends Modal {
 		contentEl.setText('Insert Citation');
 		
 		new ButtonComponent(contentEl)
+			.setClass("citation-button")
 			.setButtonText("Insert Citation")
 			.onClick((value => {
 				this.getEditor().replaceSelection("(Wilson, 2021)");
@@ -105,18 +103,7 @@ class CitationModal extends Modal {
 		return this.app.workspace.getActiveViewOfType(MarkdownView)?.editor;
 	}
 
-	private insertCitation(citationText: string){
-		this.getEditor().replaceSelection(citationText);
-		return true;
-	};
-
 };
-/*
-	private getCursorPosition(): number {
-		return this.getEditor().setSelection("(Murphy, 1924")
-	}
-};
-*/
 
 class BibliographyModal extends Modal {
 	constructor(app: App) {
@@ -167,7 +154,8 @@ class BibliographyPluginSettingsTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.mySetting)
 				.onChange(async (value) => {
 					await this.plugin.updateSettings({ mySetting: value });
-				}));
+				})
+			);
 
 
     	new Setting(containerEl)
@@ -178,12 +166,11 @@ class BibliographyPluginSettingsTab extends PluginSettingTab {
       		)
       		.addToggle((toggle) =>
         		toggle.setValue(this.plugin.settings.showRibbonIcon)
-          	.onChange((value) => {
-            	this.plugin.settings.showRibbonIcon = value;
-            	this.plugin.saveData(this.plugin.settings);
-            	this.display();
-          }),
-      );
-
+          		.onChange((value) => {
+            		this.plugin.settings.showRibbonIcon = value;
+            		this.plugin.saveData(this.plugin.settings);
+            		this.display();
+          		})
+			);
 	}
 }
