@@ -1,4 +1,4 @@
-import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, ButtonComponent, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { addIcons } from './icons';
 import { BibliographySettings, DEFAULT_SETTINGS} from "./settings";
 
@@ -17,10 +17,7 @@ export default class BibliographyPlugin extends Plugin {
 		this.addCommand({
 			id: 'create-citation',
 			name: 'Create Citation',
-			// callback: () => {
-			// 	console.log('Simple Callback');
-			// },
-			checkCallback: (checking: boolean) => {
+				checkCallback: (checking: boolean) => {
 				let leaf = this.app.workspace.activeLeaf;
 				if (leaf) {
 					if (!checking) {
@@ -88,12 +85,24 @@ class CitationModal extends Modal {
 		let {contentEl} = this;
 		console.log("Opening modal")
 		contentEl.setText('Insert Citation');
+		
+		new ButtonComponent(contentEl)
+			.setClass("citation-button")
+			.setButtonText("Insert Citation")
+			.onClick((value => {
+				this.getEditor().replaceSelection("(Wilson, 2021)");
+			}));
 	}
 
 	onClose() {
 		let {contentEl} = this;
 		contentEl.empty();
 	}
+
+	private getEditor(): Editor {
+		return this.app.workspace.getActiveViewOfType(MarkdownView)?.editor;
+	}
+
 };
 
 class BibliographyModal extends Modal {
@@ -145,7 +154,8 @@ class BibliographyPluginSettingsTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.mySetting)
 				.onChange(async (value) => {
 					await this.plugin.updateSettings({ mySetting: value });
-				}));
+				})
+			);
 
 
     	new Setting(containerEl)
@@ -156,12 +166,11 @@ class BibliographyPluginSettingsTab extends PluginSettingTab {
       		)
       		.addToggle((toggle) =>
         		toggle.setValue(this.plugin.settings.showRibbonIcon)
-          	.onChange((value) => {
-            	this.plugin.settings.showRibbonIcon = value;
-            	this.plugin.saveData(this.plugin.settings);
-            	this.display();
-          }),
-      );
-
+          		.onChange((value) => {
+            		this.plugin.settings.showRibbonIcon = value;
+            		this.plugin.saveData(this.plugin.settings);
+            		this.display();
+          		})
+			);
 	}
 }
