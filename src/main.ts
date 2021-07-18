@@ -1,17 +1,28 @@
 import { App, ButtonComponent, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { addIcons } from './icons';
-import { BibliographySettings, DEFAULT_SETTINGS} from "./settings";
+import { BibliographyPluginSettings, BibliographySettings, DEFAULT_SETTINGS} from "./settings";
 
 
 export default class BibliographyPlugin extends Plugin {
-	settings: BibliographyPluginSettings;
+	// Make settings publicly available
+	public settings: BibliographyPluginSettings = DEFAULT_SETTINGS;
+
+//	constructor(app: App, plugin: Plugin){
+//		super(app, plugin.manifest);
+//		this.settings = new BibliographyPluginSettings();
+//		console.log("Completed constructor");
+//	};
 
 	async onload() {
+		console.log("loading");
 		// Load settings. Establish defaults on first access
-		this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData() ?? {});
+		await this.loadSettings();
+		console.log("Bypassed load settings");
 
 		this.addSettingTab(new BibliographyPluginSettingsTab(this.app, this));
 
+		console.log("Added settings tab");
+		
 		// this.addStatusBarItem().setText('Status Bar Text');
 
 		this.addCommand({
@@ -64,8 +75,12 @@ export default class BibliographyPlugin extends Plugin {
 		console.log('unloading plugin');
 	}
 
+	async loadSettings(){
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+	}
+
 	/** Update plugin settings. */
-	async updateSettings(settings: Partial<BibliographySettings>) {
+	async updateSettings(settings: BibliographySettings) {
 		Object.assign(this.settings, settings);
 		await this.saveData(this.settings);
 	}
@@ -90,7 +105,7 @@ class CitationModal extends Modal {
 			.setClass("citation-button")
 			.setButtonText("Insert Citation")
 			.onClick((value => {
-				this.getEditor().replaceSelection("(Wilson, 2021)");
+				this.getEditor()!.replaceSelection("(Wilson, 2021)");
 			}));
 	}
 
@@ -99,10 +114,9 @@ class CitationModal extends Modal {
 		contentEl.empty();
 	}
 
-	private getEditor(): Editor {
+	private getEditor(): Editor | undefined {
 		return this.app.workspace.getActiveViewOfType(MarkdownView)?.editor;
 	}
-
 };
 
 class BibliographyModal extends Modal {
@@ -122,21 +136,15 @@ class BibliographyModal extends Modal {
 	}
 }
 
-class BibliographyPluginSettings {
-	mySetting: string;
-	public showRibbonIcon: boolean;
-
-	constructor(){
-		this.showRibbonIcon = true;
-	}
-}
-
 class BibliographyPluginSettingsTab extends PluginSettingTab {
 	plugin: BibliographyPlugin;
 
 	constructor(app: App, plugin: BibliographyPlugin) {
+		console.log("Creating Bibliography settings tab");
 		super(app, plugin);
+		console.log("Finished with super")
 		this.plugin = plugin;
+		console.log("Created Bibliogrpahy settings tab");
 	}
 
 	display(): void {
@@ -153,7 +161,7 @@ class BibliographyPluginSettingsTab extends PluginSettingTab {
 				.setPlaceholder('Enter your secret')
 				.setValue(this.plugin.settings.mySetting)
 				.onChange(async (value) => {
-					await this.plugin.updateSettings({ mySetting: value });
+					await this.plugin.updateSettings(this.plugin.settings);
 				})
 			);
 
