@@ -18,6 +18,7 @@ export enum SourceType {
     EncyclopediaArticle,
     Film,
     GovernmentPublication,
+    Interview,
     Journal,
     Lecture,
     Magazine,
@@ -42,9 +43,12 @@ export enum CitationPart {
     AuthorSurname,
     City,
     CloseBracket,
+    CloseSquareBracket,
+    Colon,
     Comma,
     Dot,
     OpenBracket,
+    OpenSquareBracket,
     PagesUsed,
     Publisher,
     Space,
@@ -52,11 +56,169 @@ export enum CitationPart {
     YearPublished,
 }
 
+export interface IReference{
+    authorFirstname: string,
+    authorSurname: string,
+    city: string,
+    pagesUsed: string,
+    publisher: string,
+    title: string,
+    yearPublished: string,
+}
+
 export var inlineCitationTemplates:number[][] = [
-[CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.AuthorInitial, CitationPart.YearPublished, CitationPart.CloseBracket],
-[CitationPart.OpenBracket, CitationPart.AuthorFirstname, CitationPart.AuthorSurname, CitationPart.AuthorInitial, CitationPart.YearPublished, CitationPart.CloseBracket],
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Archive 
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Artwork
+    [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],          // Bible 
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Blog
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Book
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // BookChapter
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // ConferenceProceedings
+    [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.OpenSquareBracket, CitationPart.YearPublished, CitationPart.CloseBracket, CitationPart.CloseBracket],  // CourtCase
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // DictionaryEntry
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Dissertation
+    [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],          // DVD
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // EBook
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // EditedBook
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Email
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // EncyclopediaArticle
+    [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],          // Film 
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // GovernmentPublication
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Interview
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Journal
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Lecture
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Magazine
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Newspaper
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // OnlineImage
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // OnlineVideo
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Patent
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Podcast
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Presentation
+    [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],          // PressRelease 
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Report
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Software
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Song
+    [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],          // TVShow 
+    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Website
+    [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],          // Video
 ];
 
 export function getTemplate(sourceType: SourceType):number[]{
     return inlineCitationTemplates[sourceType];
+}
+
+var inlineCitationMap = new Map([
+    ["Archive", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Artwork", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Bible", [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Blog", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Book", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["BookChapter", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["ConferenceProceedings", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["CourtCase", [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.OpenSquareBracket, CitationPart.YearPublished, CitationPart.CloseBracket, CitationPart.CloseBracket]],
+    ["DictionaryEntry", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Dissertation", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Dvd", [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["EBook", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["EditedBook", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Email", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["EncylopediaArticle", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Film", [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["GovernmentPublication", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Interview", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Journal", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Lecture", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Magazine", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Newspaper", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["OnlineImage", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["OnlineVideo", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Patent", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Podcast", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Presentation", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["PressRelease", [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Report", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Software", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Song", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["TVShow", [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Website", [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+    ["Video", [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+]);
+
+export function getInlineCitation(sourceType: string, refInfo: IReference): string{
+    if (inlineCitationMap.has(sourceType)){
+        return buildReference(inlineCitationMap.get(sourceType)!, refInfo);
+    }
+    return '()';
+}
+
+export function buildReference(template: CitationPart[], refDetails: IReference) : string{
+    let reference: string = '';
+
+    template.forEach((part) => {
+        switch(part){
+            case CitationPart.AuthorFirstname:
+                reference += refDetails.authorFirstname;
+                break;
+
+            case CitationPart.AuthorInitial:
+                reference += refDetails.authorFirstname.trimStart()[0].toUpperCase();
+                break;
+
+            case CitationPart.AuthorSurname:
+                reference += refDetails.authorSurname;
+                break;
+
+            case CitationPart.City:
+                reference += refDetails.city;
+                break;
+
+            case CitationPart.CloseBracket:
+                reference += ')';
+                break;
+
+            case CitationPart.CloseSquareBracket:
+                reference += ']';
+                break;
+
+            case CitationPart.Colon:
+                reference += ':';
+
+            case CitationPart.Comma:
+                reference += ','
+                break;
+
+            case CitationPart.Dot:
+                reference += '.'
+                break;
+
+            case CitationPart.OpenBracket:
+                reference += '('
+                break;
+
+            case CitationPart.OpenSquareBracket:
+                reference += '['
+                break;
+
+            case CitationPart.PagesUsed:
+                reference += refDetails.pagesUsed;
+                break;
+
+            case CitationPart.Publisher:
+                reference += refDetails.publisher;
+                break;
+
+            case CitationPart.Space:
+                reference += ' '
+                break;
+
+            case CitationPart.Title:
+                reference += refDetails.title;
+                break;
+
+            case CitationPart.YearPublished:
+                reference += refDetails.yearPublished;
+                break;
+        }
+    });
+    return reference;
 }
