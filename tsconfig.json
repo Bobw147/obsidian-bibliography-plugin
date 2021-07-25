@@ -9,15 +9,20 @@
     "noImplicitAny": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "strict": true,
-    "lib": [
+    "outDir": "dist",
+    "types": [
+      "node",
+      "jasmine"
+    ],
+  "lib": [
       "dom",
       "es5",
       "scripthost",
       "es2015"
-    ]
+    ],
   },
   "include": [
-    "**/*.ts"
+    "src/**/*.ts",
+    "spec/**/*.ts"
   ]
 }
