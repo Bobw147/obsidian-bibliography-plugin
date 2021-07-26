@@ -10,10 +10,6 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "outDir": "dist",
-    "types": [
-      "node",
-      "jasmine"
-    ],
   "lib": [
       "dom",
       "es5",
