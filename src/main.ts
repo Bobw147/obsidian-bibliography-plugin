@@ -1,7 +1,7 @@
 import { App, ButtonComponent, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { addIcons } from './icons';
 import { BibliographyPluginSettings, BibliographySettings, DEFAULT_SETTINGS} from "./settings";
-import { CitationPart, SourceType, getTemplate} from './templates'
+import { CitationPart, IReference, SourceType, buildReference, getInlineCitationTemplate} from './templates'
 
 export default class BibliographyPlugin extends Plugin {
 	// Make settings publicly available
@@ -14,17 +14,9 @@ export default class BibliographyPlugin extends Plugin {
 //	};
 
 	async onload() {
-		console.log("loading");
+		console.log("loading Bibliography");
 		// Load settings. Establish defaults on first access
 		await this.loadSettings();
-		console.log("Getting archive citation template");
-
-		// Temp Start
-		var citationTemplate:CitationPart[] = getTemplate(SourceType.Archive);
-		for (var i in citationTemplate){
-			console.log(citationTemplate[i])
-		}
-		// Temp Ends
 
 		this.addSettingTab(new BibliographyPluginSettingsTab(this.app, this));
 
@@ -97,6 +89,15 @@ export default class BibliographyPlugin extends Plugin {
 	}
 }
 
+class BookReference implements IReference{
+    authorFirstname = 'John';
+    authorSurname = 'Smithson';
+    city = 'Nottingham';
+    pagesUsed = '37-39';
+    publisher = 'Hodder & Stoughton';
+    title = 'Twiddling for boredom';
+	yearPublished = '2021';
+}
 
 class CitationModal extends Modal {
 	constructor(app: App) {
@@ -112,7 +113,16 @@ class CitationModal extends Modal {
 			.setClass("citation-button")
 			.setButtonText("Insert Citation")
 			.onClick((value => {
-				this.getEditor()!.replaceSelection("(Wilson, 2021)");
+
+				// Temp Start
+				let bookRef = new BookReference();
+
+				var inlineCitation: string = getInlineCitationTemplate("Book", bookRef);
+				console.log(inlineCitation);
+		
+				// Temp Ends
+
+				this.getEditor()!.replaceSelection(inlineCitation);
 			}));
 	}
 

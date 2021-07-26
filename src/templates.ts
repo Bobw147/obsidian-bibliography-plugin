@@ -144,7 +144,7 @@ var inlineCitationMap = new Map([
     ["Video", [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
 ]);
 
-export function getInlineCitation(sourceType: string, refInfo: IReference): string{
+export function getInlineCitationTemplate(sourceType: string, refInfo: IReference): string{
     if (inlineCitationMap.has(sourceType)){
         return buildReference(inlineCitationMap.get(sourceType)!, refInfo);
     }
