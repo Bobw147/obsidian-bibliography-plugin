@@ -17,3 +17,5 @@ data.json
 # code coverage output
 /coverage
 
+spec/FizzBuzz.spec.ts
+src/fizzbuzz.ts
