@@ -35,6 +35,7 @@ export enum SourceType {
     TVShow,
     Website,
     Video,
+    Authorless,
 }
 
 enum CitationPart {
@@ -65,7 +66,7 @@ export interface IReference{
     title: string,
     yearPublished: string,
 }
-
+/*
 var inlineCitationTemplates:number[][] = [
     [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Archive 
     [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Artwork
@@ -101,11 +102,15 @@ var inlineCitationTemplates:number[][] = [
     [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],          // TVShow 
     [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Website
     [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],          // Video
+
+    // Special handlers for inline citations
+    [CitationPart.OpenBracket, CitationPart.YearPublished, CitationPart.CloseBracket],                                                                      // Authorless
 ];
 
 function getTemplate(sourceType: SourceType):number[]{
     return inlineCitationTemplates[sourceType];
 }
+*/
 
 var inlineCitationMap = new Map([
     [SourceType.Archive.toString(), [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
@@ -142,16 +147,33 @@ var inlineCitationMap = new Map([
     [SourceType.TVShow.toString(), [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
     [SourceType.Website.toString(), [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
     [SourceType.Video.toString(), [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
+
+    // Special handlers for inline citations
+    [SourceType.Authorless.toString(), [CitationPart.OpenBracket, CitationPart.YearPublished, CitationPart.CloseBracket]],                                                                      // Authorless
+
 ]);
 
-export function getInlineCitationTemplate(sourceType: SourceType, refInfo: Partial<IReference>): string{
+export function getInlineCitation(sourceType: SourceType, refInfo: Partial<IReference>): string{
     if (inlineCitationMap.has(sourceType.toString())){
-        return buildReference(inlineCitationMap.get(sourceType.toString())!, refInfo);
+        switch (sourceType){
+            case SourceType.Archive:
+            case SourceType.Book:
+                if (refInfo.authorSurname == undefined || refInfo.authorSurname == '') {
+                    return buildReference(inlineCitationMap.get(SourceType.Authorless.toString())!, refInfo);
+                } else {
+                    return buildReference(inlineCitationMap.get(sourceType.toString())!, refInfo);
+                }
+                break;
+
+            default:
+                return '()';
+        }
     }
     return '()';
 }
 
-export function buildReference(template: CitationPart[], refDetails: Partial<IReference>) : string{
+
+function buildReference(template: CitationPart[], refDetails: Partial<IReference>) : string{
     let reference: string = '';
 
     template.forEach((part) => {
@@ -165,7 +187,7 @@ export function buildReference(template: CitationPart[], refDetails: Partial<IRe
                 break;
 
             case CitationPart.AuthorSurname:
-                reference += refDetails.authorSurname;
+                reference += (refDetails.authorSurname != undefined) ? refDetails.authorSurname : '';
                 break;
 
             case CitationPart.City:
