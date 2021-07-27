@@ -13,3 +13,7 @@ main.js
 # obsidian
 data.json
 .DS_Store
+
+# code coverage output
+/coverage
+
