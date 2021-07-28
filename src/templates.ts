@@ -33,10 +33,45 @@ export enum SourceType {
     Software,
     Song,
     TVShow,
-    Website,
     Video,
-    Authorless,
+    Website,
 }
+
+let sourceTypeToString: string[] = [
+    'Archive',
+    'Artwork',
+    'Bible',
+    'Blog',
+    'Book',
+    'BookChapter',
+    'ConferenceProceedings',
+    'CourtCase',
+    'DVD',
+    'EBook',
+    'EditedBook',
+    'Email',
+    'EncyclopediaArticle',
+    'Film',
+    'GovernmentPublication',
+    'Interview',
+    'Journal',
+    'Lecture',
+    'Magazine',
+    'Newspaper',
+    'OnlineImage',
+    'OnlineVideo',
+    'Patent',
+    'Podcast',
+    'Presentation',
+    'PressRelease',
+    'Report',
+    'Software',
+    'Song',
+    'TVShow',
+    'Video',
+    'Website',
+];
+
 
 enum CitationPart {
     AuthorFirstname,
@@ -66,51 +101,6 @@ export interface IReference{
     title: string,
     yearPublished: string,
 }
-/*
-var inlineCitationTemplates:number[][] = [
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Archive 
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Artwork
-    [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],          // Bible 
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Blog
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Book
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // BookChapter
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // ConferenceProceedings
-    [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.OpenSquareBracket, CitationPart.YearPublished, CitationPart.CloseBracket, CitationPart.CloseBracket],  // CourtCase
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // DictionaryEntry
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Dissertation
-    [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],          // DVD
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // EBook
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // EditedBook
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Email
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // EncyclopediaArticle
-    [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],          // Film 
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // GovernmentPublication
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Interview
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Journal
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Lecture
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Magazine
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Newspaper
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // OnlineImage
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // OnlineVideo
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Patent
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Podcast
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Presentation
-    [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],          // PressRelease 
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Report
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Software
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Song
-    [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],          // TVShow 
-    [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],  // Website
-    [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket],          // Video
-
-    // Special handlers for inline citations
-    [CitationPart.OpenBracket, CitationPart.YearPublished, CitationPart.CloseBracket],                                                                      // Authorless
-];
-
-function getTemplate(sourceType: SourceType):number[]{
-    return inlineCitationTemplates[sourceType];
-}
-*/
 
 var inlineCitationMap = new Map([
     [SourceType.Archive.toString(), [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
@@ -120,7 +110,7 @@ var inlineCitationMap = new Map([
     [SourceType.Book.toString(), [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
     [SourceType.BookChapter.toString(), [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
     [SourceType.ConferenceProceedings.toString(), [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
-    [SourceType.CourtCase.toString(), [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.OpenSquareBracket, CitationPart.YearPublished, CitationPart.CloseBracket, CitationPart.CloseBracket]],
+    [SourceType.CourtCase.toString(), [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.OpenSquareBracket, CitationPart.YearPublished, CitationPart.CloseSquareBracket, CitationPart.CloseBracket]],
     [SourceType.DictionaryEntry.toString(), [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
     [SourceType.Dissertation.toString(), [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
     [SourceType.DVD.toString(), [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
@@ -145,26 +135,96 @@ var inlineCitationMap = new Map([
     [SourceType.Software.toString(), [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
     [SourceType.Song.toString(), [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
     [SourceType.TVShow.toString(), [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
-    [SourceType.Website.toString(), [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
     [SourceType.Video.toString(), [CitationPart.OpenBracket, CitationPart.Title, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
-
-    // Special handlers for inline citations
-    [SourceType.Authorless.toString(), [CitationPart.OpenBracket, CitationPart.YearPublished, CitationPart.CloseBracket]],                                                                      // Authorless
-
+    [SourceType.Website.toString(), [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
 ]);
+
+// Special templates to handle inconsistent citation formats
+const authorOnlyTemplate = [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.CloseBracket]
+const dateOnlyTemplate = [CitationPart.OpenBracket, CitationPart.YearPublished, CitationPart.CloseBracket];
+const titleOnlyTemplate = [CitationPart.OpenBracket, CitationPart.Title, CitationPart.CloseBracket]
+const enclosedDateOnlyTemplate = [CitationPart.OpenBracket, CitationPart.OpenSquareBracket, CitationPart.YearPublished, CitationPart.CloseSquareBracket, CitationPart.CloseBracket];
 
 export function getInlineCitation(sourceType: SourceType, refInfo: Partial<IReference>): string{
     if (inlineCitationMap.has(sourceType.toString())){
         switch (sourceType){
             case SourceType.Archive:
+            case SourceType.Artwork:
+            case SourceType.Blog:
             case SourceType.Book:
+            case SourceType.BookChapter:
+            case SourceType.ConferenceProceedings:
+            case SourceType.DictionaryEntry:
+            case SourceType.Dissertation:
+            case SourceType.EBook:
+            case SourceType.EditedBook:
+            case SourceType.Email:
+            case SourceType.EncyclopediaArticle:
+            case SourceType.GovernmentPublication:
+            case SourceType.Interview:
+            case SourceType.Journal:
+            case SourceType.Lecture:
+            case SourceType.Magazine:
+            case SourceType.Newspaper:
+            case SourceType.OnlineImage:
+            case SourceType.OnlineVideo:
+            case SourceType.Patent:
+            case SourceType.Podcast:
+            case SourceType.Presentation:
+            case SourceType.Report:
+            case SourceType.Software:
+            case SourceType.Song:
+            case SourceType.Website:
                 if (refInfo.authorSurname == undefined || refInfo.authorSurname == '') {
-                    return buildReference(inlineCitationMap.get(SourceType.Authorless.toString())!, refInfo);
+                    if (refInfo.yearPublished == undefined || refInfo.yearPublished == '') {
+                        return '()';
+                    }
+                    else {
+                        return buildReference(dateOnlyTemplate, refInfo);
+                    }
                 } else {
+                    if (refInfo.yearPublished == undefined || refInfo.yearPublished == '') {
+                        return buildReference(authorOnlyTemplate, refInfo);
+                    }
                     return buildReference(inlineCitationMap.get(sourceType.toString())!, refInfo);
                 }
                 break;
 
+            case SourceType.Bible:
+            case SourceType.DVD:
+            case SourceType.Film:
+            case SourceType.PressRelease:
+            case SourceType.TVShow:
+            case SourceType.Video:
+                if (refInfo.title == undefined || refInfo.title == '') {
+                    if (refInfo.yearPublished == undefined || refInfo.yearPublished == '') {
+                        return '()';
+                    } else {
+                        return buildReference(dateOnlyTemplate, refInfo);
+                    }
+                } else {
+                    if (refInfo.yearPublished == undefined || refInfo.yearPublished == '') {
+                        return buildReference(titleOnlyTemplate, refInfo);
+                    }
+                    return buildReference(inlineCitationMap.get(sourceType.toString())!, refInfo);
+                }
+                break;
+                
+            case SourceType.CourtCase:
+                if (refInfo.title == undefined || refInfo.title == '') {
+                    if (refInfo.yearPublished == undefined || refInfo.yearPublished == '') {
+                        return '()';
+                    } else {
+                        return buildReference(enclosedDateOnlyTemplate, refInfo);
+                    }
+                } else {
+                    if (refInfo.yearPublished == undefined || refInfo.yearPublished == '') {
+                        return buildReference(titleOnlyTemplate, refInfo);
+                    }
+                    return buildReference(inlineCitationMap.get(sourceType.toString())!, refInfo);
+                }
+                break;
+    
             default:
                 return '()';
         }
