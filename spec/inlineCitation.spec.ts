@@ -1,61 +1,103 @@
-import {getInlineCitation, IReference, SourceType} from '../src/templates';
+import {getInlineCitation, IAuthorInfo, IReference, SourceType} from '../src/templates';
 
 interface ITestResult extends Partial<IReference>{
     expected: string
 };
 
-const authorInlineRef: ITestResult = {
+// Use in all tests where an author name is required
+var authorData: Partial<IAuthorInfo> = {
     authorSurname: 'Wilson',
+}
+
+// Use in all tests where two or more surnames are required
+var authorData2: Partial<IAuthorInfo> = {
+    authorSurname: 'Smythe',
+}
+
+// Use in all tests where three or more surnames are required
+var authorData3: Partial<IAuthorInfo> = {
+    authorSurname: 'Carruthers',
+}
+
+// Use in all tests where an author name exists but is empty
+var emptyAuthorData: Partial<IAuthorInfo> = {
+    authorSurname: ''
+}
+
+// Use in all tests where user name is missing completely
+var undefinedAuthorData: Partial<IAuthorInfo> = {
+}
+
+// Valid single author and date
+const authorInlineRef: ITestResult = {
+    authorInfo: [authorData],
     yearPublished: '2021',
     expected: '(Wilson, 2021)'
 };
 
+// Empty single author and date
 const emptyAuthorInlineRef: ITestResult = {
-    authorSurname: '',
+    authorInfo: [emptyAuthorData],
     yearPublished: '2021',
     expected: '(2021)'
 };
 
+// Undefined author name with date
 const undefinedAuthorInlineRef: ITestResult = {
+    authorInfo: [undefinedAuthorData],
     yearPublished: '2021',
     expected: '(2021)'
 };
 
+// Single author with missng date
 const emptyDateAuthorInlineRef: ITestResult = {
-    authorSurname: 'Wilson',
+    authorInfo: [authorData],
     expected: '(Wilson)'
 };
 
+// Single author with empty date
 const undefinedDateAuthorInlineRef: ITestResult = {
-    authorSurname: 'Wilson',
+    authorInfo: [authorData],
     yearPublished: '',
     expected: '(Wilson)'
 };
 
+// Two authors with date
+const twoAuthorsInlineRef: ITestResult = {
+    authorInfo: [authorData, authorData2],
+    yearPublished: '2021',
+    expected: '(Wilson & Smythe, 2021)'
+};
+
+// Three authors with date
+const threeAuthorsInlineRef: ITestResult = {
+    authorInfo: [authorData, authorData2, authorData3],
+    yearPublished: '2021',
+    expected: '(Wilson, Smythe & Carruthers, 2021)'
+};
+
+// Title with date
 const titleInlineRef: ITestResult = {
     title: 'A Chronic Feeling Of Deja Vu',
     yearPublished: '2021',
     expected: '(A Chronic Feeling Of Deja Vu, 2021)'
 };
 
+// Empty title with date
 const emptyTitleInlineRef: ITestResult = {
     title: '',
     yearPublished: '2021',
     expected: '(2021)'
 };
 
+// Missing title with date
 const undefinedTitleInlineRef: ITestResult = {
     yearPublished: '2021',
     expected: '(2021)'
 };
 
+// Title with empty date
 const emptyDateTitleInlineRef: ITestResult = {
-    title: 'A Chronic Feeling Of Deja Vu',
-    yearPublished: '',
-    expected: '(A Chronic Feeling Of Deja Vu)'
-};
-
-const undefinedDateTitleInlineRef: ITestResult = {
     title: 'A Chronic Feeling Of Deja Vu',
     yearPublished: '',
     expected: '(A Chronic Feeling Of Deja Vu)'
@@ -263,13 +305,6 @@ describe('buildInlineCitation', () => {
         ${SourceType.PressRelease}              | ${emptyDateTitleInlineRef}    | ${emptyDateTitleInlineRef.expected}
         ${SourceType.TVShow}                    | ${emptyDateTitleInlineRef}    | ${emptyDateTitleInlineRef.expected}
         ${SourceType.Video}                     | ${emptyDateTitleInlineRef}    | ${emptyDateTitleInlineRef.expected}
-        ${SourceType.Bible}                     | ${undefinedDateTitleInlineRef}    | ${undefinedDateTitleInlineRef.expected}
-        ${SourceType.CourtCase}                 | ${undefinedDateTitleInlineRef}    | ${undefinedDateTitleInlineRef.expected}
-        ${SourceType.DVD}                       | ${undefinedDateTitleInlineRef}    | ${undefinedDateTitleInlineRef.expected}
-        ${SourceType.Film}                      | ${undefinedDateTitleInlineRef}    | ${undefinedDateTitleInlineRef.expected}
-        ${SourceType.PressRelease}              | ${undefinedDateTitleInlineRef}    | ${undefinedDateTitleInlineRef.expected}
-        ${SourceType.TVShow}                    | ${undefinedDateTitleInlineRef}    | ${undefinedDateTitleInlineRef.expected}
-        ${SourceType.Video}                     | ${undefinedDateTitleInlineRef}    | ${undefinedDateTitleInlineRef.expected}
         ${SourceType.Bible}                     | ${undefinedInlineRef}    | ${undefinedInlineRef.expected}
         ${SourceType.CourtCase}                 | ${undefinedInlineRef}    | ${undefinedInlineRef.expected}
         ${SourceType.DVD}                       | ${undefinedInlineRef}    | ${undefinedInlineRef.expected}
@@ -277,7 +312,9 @@ describe('buildInlineCitation', () => {
         ${SourceType.PressRelease}              | ${undefinedInlineRef}    | ${undefinedInlineRef.expected}
         ${SourceType.TVShow}                    | ${undefinedInlineRef}    | ${undefinedInlineRef.expected}
         ${SourceType.Video}                     | ${undefinedInlineRef}    | ${undefinedInlineRef.expected}
-          `('Should return $result when $sourceType and $refData are used', ({sourceType, refData, result} ) => {
+        ${SourceType.Archive}                   | ${twoAuthorsInlineRef}   | ${twoAuthorsInlineRef.expected}
+        ${SourceType.Archive}                   | ${threeAuthorsInlineRef} | ${threeAuthorsInlineRef.expected}
+           `('Should return $result when $sourceType and $refData are used', ({sourceType, refData, result} ) => {
             expect(getInlineCitation(sourceType, refData)).toEqual(result)
         });
 });
