@@ -92,16 +92,31 @@ enum CitationPart {
     YearPublished,
 }
 
-export interface IReference{
+enum CitationMode {
+    Inline,
+    Full
+}
+
+enum DateMode {
+    Plain,
+    Bracketed
+}
+
+export interface IAuthorInfo {
     authorFirstname: string,
     authorSurname: string,
+    authorInitial?: () => string 
+}
+
+export interface IReference {
+    authorInfo: Partial<IAuthorInfo>[],
     city: string,
     pagesUsed: string,
     publisher: string,
     title: string,
     yearPublished: string,
 }
-
+/*
 var inlineCitationMap = new Map([
     [SourceType.Archive.toString(), [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
     [SourceType.Artwork.toString(), [CitationPart.OpenBracket, CitationPart.AuthorSurname, CitationPart.Comma, CitationPart.Space, CitationPart.YearPublished, CitationPart.CloseBracket]],
@@ -144,9 +159,13 @@ const authorOnlyTemplate = [CitationPart.OpenBracket, CitationPart.AuthorSurname
 const dateOnlyTemplate = [CitationPart.OpenBracket, CitationPart.YearPublished, CitationPart.CloseBracket];
 const titleOnlyTemplate = [CitationPart.OpenBracket, CitationPart.Title, CitationPart.CloseBracket]
 const enclosedDateOnlyTemplate = [CitationPart.OpenBracket, CitationPart.OpenSquareBracket, CitationPart.YearPublished, CitationPart.CloseSquareBracket, CitationPart.CloseBracket];
+*/
 
 export function getInlineCitation(sourceType: SourceType, refInfo: Partial<IReference>): string{
-    if (inlineCitationMap.has(sourceType.toString())){
+    if (true){
+        let reference = '(';
+        let date = '';
+        let title = '';
         switch (sourceType){
             case SourceType.Archive:
             case SourceType.Artwork:
@@ -175,20 +194,19 @@ export function getInlineCitation(sourceType: SourceType, refInfo: Partial<IRefe
             case SourceType.Software:
             case SourceType.Song:
             case SourceType.Website:
-                if (refInfo.authorSurname == undefined || refInfo.authorSurname == '') {
-                    if (refInfo.yearPublished == undefined || refInfo.yearPublished == '') {
-                        return '()';
-                    }
-                    else {
-                        return buildReference(dateOnlyTemplate, refInfo);
+                let author = buildAuthorInfo(CitationMode.Inline, refInfo);
+                date = buildYearPublished(DateMode.Plain, refInfo);
+                if (author != ''){
+                    reference += author;
+                    if (date != ''){
+                        reference += ', ' + date;
                     }
                 } else {
-                    if (refInfo.yearPublished == undefined || refInfo.yearPublished == '') {
-                        return buildReference(authorOnlyTemplate, refInfo);
+                    if (date != ''){
+                        reference += date;
                     }
-                    return buildReference(inlineCitationMap.get(sourceType.toString())!, refInfo);
                 }
-                break;
+                return reference + ')';
 
             case SourceType.Bible:
             case SourceType.DVD:
@@ -196,35 +214,36 @@ export function getInlineCitation(sourceType: SourceType, refInfo: Partial<IRefe
             case SourceType.PressRelease:
             case SourceType.TVShow:
             case SourceType.Video:
-                if (refInfo.title == undefined || refInfo.title == '') {
-                    if (refInfo.yearPublished == undefined || refInfo.yearPublished == '') {
-                        return '()';
-                    } else {
-                        return buildReference(dateOnlyTemplate, refInfo);
+                title = buildTitle(refInfo);
+                date = buildYearPublished(DateMode.Plain, refInfo);
+                if (title != ''){
+                    reference += title;
+                    if (date != ''){
+                        reference += ', ' + date;
                     }
                 } else {
-                    if (refInfo.yearPublished == undefined || refInfo.yearPublished == '') {
-                        return buildReference(titleOnlyTemplate, refInfo);
+                    if (date != ''){
+                        reference += date;
                     }
-                    return buildReference(inlineCitationMap.get(sourceType.toString())!, refInfo);
                 }
-                break;
+                return reference + ')';
+
                 
             case SourceType.CourtCase:
-                if (refInfo.title == undefined || refInfo.title == '') {
-                    if (refInfo.yearPublished == undefined || refInfo.yearPublished == '') {
-                        return '()';
-                    } else {
-                        return buildReference(enclosedDateOnlyTemplate, refInfo);
+                title = buildTitle(refInfo);
+                date = buildYearPublished(DateMode.Bracketed, refInfo);
+                if (title != ''){
+                    reference += title;
+                    if (date != ''){
+                        reference += ', ' + date;
                     }
                 } else {
-                    if (refInfo.yearPublished == undefined || refInfo.yearPublished == '') {
-                        return buildReference(titleOnlyTemplate, refInfo);
+                    if (date != ''){
+                        reference += date;
                     }
-                    return buildReference(inlineCitationMap.get(sourceType.toString())!, refInfo);
                 }
-                break;
-    
+                return reference + ')';
+     
             default:
                 return '()';
         }
@@ -232,22 +251,22 @@ export function getInlineCitation(sourceType: SourceType, refInfo: Partial<IRefe
     return '()';
 }
 
-
+/*
 function buildReference(template: CitationPart[], refDetails: Partial<IReference>) : string{
     let reference: string = '';
 
     template.forEach((part) => {
         switch(part){
             case CitationPart.AuthorFirstname:
-                reference += refDetails.authorFirstname;
+                reference += refDetails.authorInfo[0].authorFirstname;
                 break;
 
             case CitationPart.AuthorInitial:
-                reference += refDetails.authorFirstname.trimStart()[0].toUpperCase();
+                reference += refDetails.authorInfo[0].authorFirstname.trimStart()[0].toUpperCase();
                 break;
 
             case CitationPart.AuthorSurname:
-                reference += (refDetails.authorSurname != undefined) ? refDetails.authorSurname : '';
+                reference += (refDetails.authorInfo[0].authorSurname != undefined) ? refDetails.authorInfo[0].authorSurname : '';
                 break;
 
             case CitationPart.City:
@@ -303,4 +322,58 @@ function buildReference(template: CitationPart[], refDetails: Partial<IReference
         }
     });
     return reference;
-}
+};
+*/
+
+function buildAuthorInfo(mode: CitationMode, refInfo: Partial<IReference>): string {
+    let authorList = '';
+    if (refInfo.authorInfo != undefined){
+        refInfo.authorInfo.forEach((element, index) => {
+            if (element.authorSurname != undefined && element.authorSurname != ''){
+                if (mode == CitationMode.Inline){
+                    if (index > 0){
+                        authorList += index < (refInfo.authorInfo.length - 1) ? ', ' : ' & ';
+                    }
+                    authorList += element.authorSurname;
+                }
+            }
+        });
+    }
+    return authorList;
+/*
+    if (refInfo.authorInfo != undefined && refInfo.authorInfo.length != 0){
+        if (refInfo.authorInfo[0].authorSurname != undefined && refInfo.authorInfo[0].authorSurname != '') {
+            authorInfo = refInfo.authorInfo[0].authorSurname;
+            if (mode == CitationMode.Full) {
+                authorInfo += refInfo.authorInfo[0].authorFirstname[0] + '.,';
+     
+            }
+        }
+    }
+    return authorInfo;
+*/
+};
+
+function buildTitle(refInfo: Partial<IReference>): string {
+    let title = '';
+    if (refInfo.title != undefined){
+        title = refInfo.title;
+    }
+    return title;
+};
+
+function buildYearPublished(mode: DateMode, refInfo: Partial<IReference>): string {
+    let date = '';
+    if (refInfo.yearPublished != undefined && refInfo.yearPublished != ''){
+        date = refInfo.yearPublished;
+        if (mode == DateMode.Bracketed){
+            date = '[' + date + ']';
+        }
+    }
+    return date;
+};
+
+export function getFullCitation(sourceType: SourceType, refInfo: IReference): string {
+    
+    return '';
+};
